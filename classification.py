@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+print("importing tensorflow")
+import tensorflow as tf
+print("TensorFlow version:", tf.__version__)
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+print("Num CPUs Available: ", len(tf.config.experimental.list_physical_devices('CPU')))
+
 # Adapted from jupyter notebook at
 # https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/classification.ipynb
 # provided in this online tutorial
@@ -82,7 +88,6 @@ print("Basic classification: Classify images of clothing")
 print("Loading the packages")
 
 from matplotlib_utils import plot_model_fit_history, wait_for_click
-import tensorflow as tf
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import numpy as np
 import matplotlib.pyplot as plt
@@ -284,17 +289,6 @@ probability_model = tf.keras.Sequential(
 
 predictions = probability_model.predict(test_images)
 
-print("Showing the confusion matrix of test vs predicted")
-pred_labels = [np.argmax(predictions[i]) for i in range(len(predictions))]
-len(pred_labels)
-len(test_labels)
-
-cm = confusion_matrix(test_labels, pred_labels)
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-disp.plot(cmap=plt.cm.Blues)
-plt.show()
-wait_for_click()
-
 print("Showing the full set of 10 class predictions")
 
 def plot_image(i, predictions_array, true_label, img):
@@ -409,6 +403,18 @@ wait_for_click()
 # `tf.keras.Model.predict` returns a list of lists—
 # one list for each image in the batch of data. Grab 
 # the predictions for our (only) image in the batch:
+
+print("Showing the confusion matrix of test vs predicted")
+pred_labels = [np.argmax(predictions[i]) for i in range(len(predictions))]
+len(pred_labels)
+len(test_labels)
+
+cm = confusion_matrix(test_labels, pred_labels)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot(cmap=plt.cm.Blues)
+plt.show()
+wait_for_click()
+
 
 print("done")
 
