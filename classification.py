@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import os
+os.system('cls||clear')
+
+print("Basic fashion MNIST classification")
+
 print("importing tensorflow")
 import tensorflow as tf
 print("TensorFlow version:", tf.__version__)
@@ -46,13 +51,6 @@ print("Num CPUs Available: ", len(tf.config.experimental.list_physical_devices('
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-import os
-def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
-
-cls()
-print("Basic classification: Classify images of clothing")
-
 # <table class="tfo-notebook-buttons" align="left">
 #   <td>
 #     <a target="_blank" href="https://www.tensorflow.org/tutorials/k
@@ -87,7 +85,7 @@ print("Basic classification: Classify images of clothing")
 
 print("Loading the packages")
 
-from matplotlib_utils import plot_model_fit_history, wait_for_click
+from matplotlib_utils import plot_model_fit_history, show_and_wait_for_click
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import numpy as np
 import matplotlib.pyplot as plt
@@ -154,8 +152,6 @@ fashion_mnist = tf.keras.datasets.fashion_mnist
 class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 
-print("Exploring the data")
-# 
 # Let's explore the format of the dataset before training the model. The following shows there are 60,000 images in the training set, with each image represented as 28 x 28 pixels:
 
 train_images.shape
@@ -182,12 +178,12 @@ len(test_labels)
 # The data must be preprocessed before training the network.
 # If you inspect the first image in the training set, you will see that the pixel values fall in the range of 0 to 255:
 
-plt.figure()
-plt.imshow(train_images[0])
-plt.colorbar()
-plt.grid(False)
-plt.show()
-wait_for_click()
+# plt.figure()
+# plt.imshow(train_images[0])
+# plt.colorbar()
+# plt.grid(False)
+# plt.show()
+# show_and_wait_for_click(plt,"inspecting image 0")
 
 
 # Scale these values to a range of 0 to 1 before feeding 
@@ -207,8 +203,7 @@ for i in range(25):
     plt.grid(False)
     plt.imshow(train_images[i], cmap=plt.cm.binary)
     plt.xlabel(class_names[train_labels[i]])
-plt.show()
-wait_for_click()
+show_and_wait_for_click(plt,"5x5 grid of the first 25 images and their classes")
 
 
 print("Building the model")
@@ -259,7 +254,6 @@ print("Training the model")
 
 history = model.fit(train_images, train_labels, epochs=10)
 
-print("Plotting the model fit accuracy and loss over each epoch")
 plot_model_fit_history(
   history, 
   accuracy_metrics=['accuracy'], 
@@ -289,14 +283,12 @@ probability_model = tf.keras.Sequential(
 
 predictions = probability_model.predict(test_images)
 
-print("Showing the full set of 10 class predictions")
 
 def plot_image(i, predictions_array, true_label, img):
   true_label, img = true_label[i], img[i]
   plt.grid(False)
   plt.xticks([])
   plt.yticks([])
-
   plt.imshow(img, cmap=plt.cm.binary)
 
   predicted_label = np.argmax(predictions_array)
@@ -322,7 +314,6 @@ def plot_value_array(i, predictions_array, true_label):
   thisplot[predicted_label].set_color('red')
   thisplot[true_label].set_color('blue')
 
-print("Verifying predictions")
 # 
 # With the model trained, you can use it to make pedictions 
 # about some images.
@@ -338,8 +329,7 @@ plt.subplot(1,2,1)
 plot_image(i, predictions[i], test_labels, test_images)
 plt.subplot(1,2,2)
 plot_value_array(i, predictions[i],  test_labels)
-plt.show()
-wait_for_click()
+show_and_wait_for_click(plt,f"image[{i}] and its predicted class {predictions[i]}")
 
 i = 12
 plt.figure(figsize=(6,3))
@@ -347,11 +337,9 @@ plt.subplot(1,2,1)
 plot_image(i, predictions[i], test_labels, test_images)
 plt.subplot(1,2,2)
 plot_value_array(i, predictions[i],  test_labels)
-plt.show()
-wait_for_click()
+show_and_wait_for_click(plt,plt, f"image[{i}] and its predicted class {predictions[i]}")
 
 
-print("Showing correct predictions in blue and incorrect predictions in red")
 # Let's plot several images with their predictions. 
 # Note that the model can be wrong even when very confident.
 
@@ -368,52 +356,49 @@ for i in range(num_images):
   plt.subplot(num_rows, 2*num_cols, 2*i+2)
   plot_value_array(i, predictions[i], test_labels)
 plt.tight_layout()
-plt.show()
-wait_for_click()
+show_and_wait_for_click(plt,"showing the first 15 images with their predicted classes")
 
 
-print("Using he trained model to make a prediction about a single image")
+# print("Using he trained model to make a prediction about a single image")
 
-# Grab an image from the test dataset.
-img = test_images[1]
+# # Grab an image from the test dataset.
+# img = test_images[1]
 
-print(img.shape)
+# print(img.shape)
 
-# `tf.keras` models are optimized to make predictions on a *batch*, 
-# or collection, of examples at once. Accordingly, even though you're 
-# using a single image, you need to add it to a list:
+# # `tf.keras` models are optimized to make predictions on a *batch*, 
+# # or collection, of examples at once. Accordingly, even though you're 
+# # using a single image, you need to add it to a list:
 
-# Add the image to a batch where it's the only member.
-img = (np.expand_dims(img,0))
+# # Add the image to a batch where it's the only member.
+# img = (np.expand_dims(img,0))
 
-print(img.shape)
+# print(img.shape)
 
-# Now predict the correct label for this image:
+# # Now predict the correct label for this image:
 
-predictions_single = probability_model.predict(img)
+# predictions_single = probability_model.predict(img)
 
-print(predictions_single)
+# print(predictions_single)
 
-plot_value_array(1, predictions_single[0], test_labels)
-_ = plt.xticks(range(10), class_names, rotation=45)
-plt.show()
-wait_for_click()
+# plot_value_array(1, predictions_single[0], test_labels)
+# _ = plt.xticks(range(10), class_names, rotation=45)
+# show_and_wait_for_click(plt,"prediction for image[0] with class names")
 
 
 # `tf.keras.Model.predict` returns a list of lists—
 # one list for each image in the batch of data. Grab 
 # the predictions for our (only) image in the batch:
 
-print("Showing the confusion matrix of test vs predicted")
-pred_labels = [np.argmax(predictions[i]) for i in range(len(predictions))]
+pred_labels = np.argmax(predictions)
+# pred_labels = [np.argmax(predictions[i]) for i in range(len(predictions))]
 len(pred_labels)
 len(test_labels)
 
 cm = confusion_matrix(test_labels, pred_labels)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm)
 disp.plot(cmap=plt.cm.Blues)
-plt.show()
-wait_for_click()
+show_and_wait_for_click(plt,"the confusion matrix of test vs pred labels")
 
 
 print("done")

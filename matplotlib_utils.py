@@ -7,37 +7,43 @@ import pandas as pd
 import numpy as np
 from typing import List
 import random
+import sys
 
 from numpy.random import default_rng
 
-def wait_for_click():
-    print(f"Click key or mouse in window to close.")
+def show_and_wait_for_click(plt, msg=None):
+    if msg is not None:
+        print(msg)
+    print("click the window's close button to continue")
+    sys.stdout.flush()
+
+    # blocks
+    plt.show()
+    
     plt.waitforbuttonpress()
     plt.close("all")
     plt.close(plt.gcf())
 
-    # plt.show(block=False)
+# def get_unique_random_ints(minVal: int, maxVal: int, N: int):
+#     R = maxVal-minVal
+#     if N > R:
+#         raise Exception("not possible to create N unique integers over range of {R} integers")
+#     rint = list(range(minVal,maxVal))
+#     np.random.shuffle(rint)
+#     return rint
 
-def get_unique_random_ints(minVal: int, maxVal: int, N: int):
-    R = maxVal-minVal
-    if N > R:
-        raise Exception("not possible to create N unique integers over range of {R} integers")
-    rint = list(range(minVal,maxVal))
-    np.random.shuffle(rint)
-    return rint
-
-def generate_random_plot_idx(generator):
-    N = generator.n
-    if N < 1:
-        msg = "ERROR: generator.n is not > zero"
-        raise Exception(msg)
+# def generate_random_plot_idx(generator):
+#     N = generator.n
+#     if N < 1:
+#         msg = "ERROR: generator.n is not > zero"
+#         raise Exception(msg)
     
-    rints = get_unique_random_ints(0, N, N)
-    if len(rints) != N:
-        msg = f"ERROR: rints:{len(rints)} != N:{N}"
-        raise Exception(msg)
+#     rints = get_unique_random_ints(0, N, N)
+#     if len(rints) != N:
+#         msg = f"ERROR: rints:{len(rints)} != N:{N}"
+#         raise Exception(msg)
     
-    return rints
+#     return rints
 
 def plot_idxed_image_files_with_labels(name, image_files, labels, plot_idx):
     assert len(image_files) == len(labels) == len(plot_idx), "ERROR: length failures"
@@ -53,8 +59,7 @@ def plot_idxed_image_files_with_labels(name, image_files, labels, plot_idx):
         title = f"{name}[{i}]: {labels[i]}" if name is not None else labels[i]
         plt.title(title)
     name_cnt =  f"{N} {name}" if name is not None else f"{N}"
-    print(f"Showing {name_cnt} images and labels")
-    wait_for_click()
+    show_and_wait_for_click(plt, "{name_cnt} images and labels")
 
 def plot_idxed_generator_images(name, generator, plot_idx, idx_to_label_map=None):
     assert len(plot_idx) > 0, "ERROR: empty plot_idx"
@@ -78,10 +83,8 @@ def plot_idxed_generator_images(name, generator, plot_idx, idx_to_label_map=None
         label = "unknown" if y is None else idx_to_label_map[y[i]]
         plt.title(f"{name}[{i}]: {label}")
 
-    legend = "images only" if y is None else "images and labels"
-    print(f"Showing {N} {name} {legend}")
-        
-    wait_for_click()
+    legend = "images only" if y is None else "images and labels"        
+    show_and_wait_for_click(plt, f"Showing {N} {name} {legend}")
 
 def plot_histogram(title: str='Title', data: List[float]=[], with_normal: bool=True):
     import matplotlib.pyplot as plt
@@ -100,8 +103,7 @@ def plot_histogram(title: str='Title', data: List[float]=[], with_normal: bool=T
         title = f"{title} mu:{mu:.2f} std:{std:.2f}"
     
     plt.title(title)
-    plt.show()
-    wait_for_click()
+    show_and_wait_for_click(plt, "Histogram with normal pdf")
 
 def plot_model_fit_history(
     history, 
@@ -128,9 +130,7 @@ def plot_model_fit_history(
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
-    print("Showing accuracy metrics per epoch")
-    wait_for_click()
+    show_and_wait_for_click(plt, "accuracy metrics per epoch")
     
     # plot loss metrics per epoch
     for loss_metric in loss_metrics:
@@ -140,9 +140,7 @@ def plot_model_fit_history(
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
-    print("Showing lost metrics per epoch")
-    wait_for_click()
+    show_and_wait_for_click(plt, "loss metrics per epoch")
 
 
 #==============================================
