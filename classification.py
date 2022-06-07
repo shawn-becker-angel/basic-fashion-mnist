@@ -273,7 +273,6 @@ print('\nTest accuracy:', test_acc)
 # *   [Demonstrate overfitting](https://www.tensorflow.org/tutorials/keras/overfit_and_underfit#demonstrate_overfitting)
 # *   [Strategies to prevent overfitting](https://www.tensorflow.org/tutorials/keras/overfit_and_underfit#strategies_to_prevent_overfitting)
 
-print("Making predictions")
 # 
 # With the model trained, you can use it to make predictions about some images.
 # Attach a softmax layer to convert the model's linear outputs—[logits](https://developers.google.com/machine-learning/glossary#logits)—to probabilities, which should be easier to interpret.
@@ -329,7 +328,7 @@ plt.subplot(1,2,1)
 plot_image(i, predictions[i], test_labels, test_images)
 plt.subplot(1,2,2)
 plot_value_array(i, predictions[i],  test_labels)
-show_and_wait_for_click(plt,f"image[{i}] and its predicted class {predictions[i]}")
+show_and_wait_for_click(plt,f"image[{i}] and its predicted\nclass values: {predictions[i]}")
 
 i = 12
 plt.figure(figsize=(6,3))
@@ -337,7 +336,7 @@ plt.subplot(1,2,1)
 plot_image(i, predictions[i], test_labels, test_images)
 plt.subplot(1,2,2)
 plot_value_array(i, predictions[i],  test_labels)
-show_and_wait_for_click(plt,plt, f"image[{i}] and its predicted class {predictions[i]}")
+show_and_wait_for_click(plt, f"image[{i}] and its predicted\nclass values{predictions[i]}")
 
 
 # Let's plot several images with their predictions. 
@@ -390,10 +389,9 @@ show_and_wait_for_click(plt,"showing the first 15 images with their predicted cl
 # one list for each image in the batch of data. Grab 
 # the predictions for our (only) image in the batch:
 
-pred_labels = np.argmax(predictions)
+pred_labels = np.argmax(predictions, axis=1)
 # pred_labels = [np.argmax(predictions[i]) for i in range(len(predictions))]
-len(pred_labels)
-len(test_labels)
+assert len(pred_labels) == len(test_labels)
 
 cm = confusion_matrix(test_labels, pred_labels)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm)

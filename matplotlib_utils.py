@@ -12,6 +12,7 @@ import sys
 from numpy.random import default_rng
 
 def show_and_wait_for_click(plt, msg=None):
+    print()
     if msg is not None:
         print(msg)
     print("click the window's close button to continue")
@@ -23,6 +24,7 @@ def show_and_wait_for_click(plt, msg=None):
     plt.waitforbuttonpress()
     plt.close("all")
     plt.close(plt.gcf())
+    print()
 
 # def get_unique_random_ints(minVal: int, maxVal: int, N: int):
 #     R = maxVal-minVal
