@@ -4,7 +4,7 @@
 import os
 os.system('cls||clear')
 
-print("Basic fashion MNIST classification")
+print("basic-fashion-mnist image classification")
 
 print("importing tensorflow")
 import tensorflow as tf
