@@ -1,6 +1,21 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# create and activate your virtual environment
+
+# per https://www.tensorflow.org/install/pip#macos
+# install tensorflow with pip on macos
+# python3 -m pip install tensorflow
+# python3 -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+
+# per https://scikit-learn.org/stable/install.html
+# install sklearn with pip on macos
+# pip install scikit-learn
+# python -c "import sklearn; sklearn.show_versions()"
+
+# pip install opencv-python
+
+
 import os
 os.system('cls||clear')
 
@@ -400,6 +415,31 @@ show_and_wait_for_click(plt,"the confusion matrix of test vs pred labels")
 
 
 print("done")
+
+# this section has been copied from 
+# https://dataplatform.cloud.ibm.com/analytics/notebooks/v2/acd6bd85-dc27-4d09-8045-a16ac13b568e?projectid=a653439b-775c-4414-aaf1-c485df7d18a2&context=cpdaas
+
+import seaborn as sns
+
+label = test_labels
+pred_label = pred_labels
+label_map = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot'] 
+
+conf_matrix = confusion_matrix(label, pred_label)
+
+# display confusion matrix as heatmap
+ax = sns.heatmap(conf_matrix, 
+            cmap='Blues', 
+            xticklabels=label_map, 
+            yticklabels=label_map,
+            annot=True,
+            fmt='d')
+
+plt.xlabel('Predicted label') 
+plt.ylabel('Correct label') 
+
+plt.show()
+
 
 
 
