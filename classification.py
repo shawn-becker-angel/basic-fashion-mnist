@@ -414,15 +414,63 @@ disp.plot(cmap=plt.cm.Blues)
 show_and_wait_for_click(plt,"the confusion matrix of test vs pred labels")
 
 
-print("done")
+print("done with tensorflow appraoch")
 
+###########################################################################
 # this section has been copied from 
 # https://dataplatform.cloud.ibm.com/analytics/notebooks/v2/acd6bd85-dc27-4d09-8045-a16ac13b568e?projectid=a653439b-775c-4414-aaf1-c485df7d18a2&context=cpdaas
 
-import seaborn as sns
+probability_model = tf.keras.Sequential(
+  [model, tf.keras.layers.Softmax()])
+
+test_input_data = test_images
+predictions = probability_model.predict(test_input_data)
+
+
+#### Review the Prediction Results
+
+# Each row in this array contains a numeric score (ranging from 0 and 1) for each of
+# the 10 classes that we trained the model on, indicating the likelihood that the 
+# depicted clothing item belongs to the class. For the first image in the test data 
+# set the predictions look as follows:
+
+predictions[0]
+
+# The higher the score, the more confident the model is that the depicted clothing 
+# item belongs to the class. Calculate the maximum for each rows to determine what 
+# the predicted label is:
 
 label = test_labels
-pred_label = pred_labels
+pred_label = [np.argmax(i) for i in predictions]
+
+# Let's take a peek at the predicted label and the correct label for the first clothing 
+# item in the test data set:
+
+print('Predicted label for the first clothing item: {}'.format(pred_label[0]))
+print('Correct label for the first clothing item:   {}'.format(label[0]))
+
+# Ideally the prediction should be correct, but your results might vary. Let's tally up 
+# the numbers for the entire test data.
+
+# identify correctly and incorrectly classified clothing items
+
+correctly_classified = []
+incorrectly_classified = []
+index = 0
+for actual, predict in zip(label, pred_label):
+    if actual == predict:
+        correctly_classified.append(index)
+    else:
+        incorrectly_classified.append(index)
+    index += 1
+
+ccc = len(correctly_classified)
+icc = len(incorrectly_classified)
+print('Correctly classified clothing items  : {:5d} ({:=5.2f} %)'.format(ccc, ccc * 100 / (ccc + icc)))    
+print('Incorrectly classified clothing items: {:5d} ({:=5.2f} %)'.format(icc, icc * 100 / (ccc + icc)))    
+
+import seaborn as sns
+
 label_map = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot'] 
 
 conf_matrix = confusion_matrix(label, pred_label)
@@ -440,8 +488,57 @@ plt.ylabel('Correct label')
 
 plt.show()
 
+# plot up to max_preview clothing items that were correctly identified
+max_preview = 5
 
+X_test = test_input_data * 255.0 ## not sure
 
+num_rows = 1
+num_cols = 5
+num_images = num_rows*num_cols
+fig = plt.figure(figsize=(2*num_cols, 2*num_rows))
+for index, fail_index in enumerate(incorrectly_classified[0:max_preview]):
+    plt.xticks([])
+    plt.yticks([])
+    plt.subplot(4, 5, index + 1)
+    plt.imshow(np.reshape(X_test[fail_index], (28,28)), cmap=plt.cm.binary)
+    plt.title('Pred: {}, Actual: {}'.format(label_map[pred_label[fail_index]], 
+                                            label_map[label[fail_index]]), fontsize = 10)
+plt.show()
+
+from sklearn.metrics import precision_score
+
+# Calculate precision scores
+precision_scores = precision_score(label, pred_label, average=None)
+
+y_pos = np.arange(len(precision_scores))
+
+fig = plt.figure(figsize=(5,5))
+plt.bar(y_pos, precision_scores, align='center', alpha=0.5)
+plt.xticks(y_pos, label_map, rotation=90)
+plt.ylabel('Precision ( --> better)')
+plt.title('Precision scores per class')
+
+plt.show()
+
+from sklearn.metrics import recall_score
+
+# Calculate recall score for each class
+recall_scores = recall_score(label, pred_label, average=None)
+
+# Visualize recall scores
+
+y_pos = np.arange(len(recall_scores))
+
+fig = plt.figure(figsize=(5,5))
+plt.bar(y_pos, recall_scores, align='center', alpha=0.5)
+plt.xticks(y_pos, label_map, rotation=90)
+plt.ylabel('Recall ( --> better)')
+plt.title('Recall scores per class')
+
+plt.show()
+
+print("done with ibm approach")
 
 
 
