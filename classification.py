@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+epochs = 2
+plot_figures = True
+
 # create and activate your virtual environment
 
 # per https://www.tensorflow.org/install/pip#macos
@@ -210,15 +213,16 @@ test_images = test_images / 255.0
 # To verify that the data is in the correct format and that you're ready to build and train the network, let's 
 # display the first 25 images from the *training set* and display the class name below each image.
 
-plt.figure(figsize=(10,10))
-for i in range(25):
-    plt.subplot(5,5,i+1)
-    plt.xticks([])
-    plt.yticks([])
-    plt.grid(False)
-    plt.imshow(train_images[i], cmap=plt.cm.binary)
-    plt.xlabel(class_names[train_labels[i]])
-show_and_wait_for_click(plt,"5x5 grid of the first 25 images and their classes")
+if plot_figures:
+    fig = plt.figure(figsize=(10,10))
+    for i in range(25):
+        plt.subplot(5,5,i+1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.grid(False)
+        plt.imshow(train_images[i], cmap=plt.cm.binary)
+        plt.xlabel(class_names[train_labels[i]])
+    show_and_wait_for_click(plt,"5x5 grid of the first 25 images and their classes")
 
 
 print("Building the model")
@@ -267,12 +271,13 @@ print("Training the model")
 # To start training,  call the
 # `model.fit`](https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit) method—so called because it "fits" the model to the training data:
 
-history = model.fit(train_images, train_labels, epochs=10)
+history = model.fit(train_images, train_labels, epochs=epochs)
 
-plot_model_fit_history(
-  history, 
-  accuracy_metrics=['accuracy'], 
-  loss_metrics=['loss'])
+if plot_figures:
+    plot_model_fit_history(
+    history, 
+    accuracy_metrics=['accuracy'], 
+    loss_metrics=['loss'])
 
 # As the model trains, the loss and accuracy metrics are displayed. This model reaches an accuracy of about 0.91 (or 91%) on the training data.
 
@@ -337,21 +342,24 @@ def plot_value_array(i, predictions_array, true_label):
 # prediction labels are red. The number gives the percentage 
 # (out of 100) for the predicted label.
 
-i = 0
-plt.figure(figsize=(6,3))
-plt.subplot(1,2,1)
-plot_image(i, predictions[i], test_labels, test_images)
-plt.subplot(1,2,2)
-plot_value_array(i, predictions[i],  test_labels)
-show_and_wait_for_click(plt,f"image[{i}] and its predicted\nclass values: {predictions[i]}")
+if plot_figures:
+    i = 0
+    plt.figure(figsize=(6,3))
+    plt.subplot(1,2,1)
+    plot_image(i, predictions[i], test_labels, test_images)
+    plt.subplot(1,2,2)
+    plot_value_array(i, predictions[i],  test_labels)
+    plt.tight_layout()
+    show_and_wait_for_click(plt,f"image[{i}] and its predicted\nclass values: {predictions[i]}")
 
-i = 12
-plt.figure(figsize=(6,3))
-plt.subplot(1,2,1)
-plot_image(i, predictions[i], test_labels, test_images)
-plt.subplot(1,2,2)
-plot_value_array(i, predictions[i],  test_labels)
-show_and_wait_for_click(plt, f"image[{i}] and its predicted\nclass values{predictions[i]}")
+    i = 12
+    plt.figure(figsize=(6,3))
+    plt.subplot(1,2,1)
+    plot_image(i, predictions[i], test_labels, test_images)
+    plt.subplot(1,2,2)
+    plot_value_array(i, predictions[i],  test_labels)
+    plt.tight_layout()
+    show_and_wait_for_click(plt, f"image[{i}] and its predicted\nclass values{predictions[i]}")
 
 
 # Let's plot several images with their predictions. 
@@ -360,17 +368,18 @@ show_and_wait_for_click(plt, f"image[{i}] and its predicted\nclass values{predic
 # Plot the first X test images, their predicted labels, 
 # and the true labels. Color correct predictions in blue
 # and incorrect predictions in red.
-num_rows = 5
-num_cols = 3
-num_images = num_rows*num_cols
-plt.figure(figsize=(2*2*num_cols, 2*num_rows))
-for i in range(num_images):
-  plt.subplot(num_rows, 2*num_cols, 2*i+1)
-  plot_image(i, predictions[i], test_labels, test_images)
-  plt.subplot(num_rows, 2*num_cols, 2*i+2)
-  plot_value_array(i, predictions[i], test_labels)
-plt.tight_layout()
-show_and_wait_for_click(plt,"showing the first 15 images with their predicted classes")
+if plot_figures:
+    num_rows = 5
+    num_cols = 3
+    num_images = num_rows*num_cols
+    plt.figure(figsize=(2*2*num_cols, 2*num_rows))
+    for i in range(num_images):
+        plt.subplot(num_rows, 2*num_cols, 2*i+1)
+        plot_image(i, predictions[i], test_labels, test_images)
+        plt.subplot(num_rows, 2*num_cols, 2*i+2)
+        plot_value_array(i, predictions[i], test_labels)
+    plt.tight_layout()
+    show_and_wait_for_click(plt,"showing the first 15 images with their predicted classes")
 
 
 # print("Using he trained model to make a prediction about a single image")
@@ -409,9 +418,11 @@ pred_labels = np.argmax(predictions, axis=1)
 assert len(pred_labels) == len(test_labels)
 
 cm = confusion_matrix(test_labels, pred_labels)
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-disp.plot(cmap=plt.cm.Blues)
-show_and_wait_for_click(plt,"the confusion matrix of test vs pred labels")
+
+if plot_figures:
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot(cmap=plt.cm.Blues)
+    show_and_wait_for_click(plt,"the confusion matrix of test vs pred labels")
 
 
 print("done with tensorflow appraoch")
@@ -475,36 +486,60 @@ label_map = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'S
 
 conf_matrix = confusion_matrix(label, pred_label)
 
-# display confusion matrix as heatmap
-ax = sns.heatmap(conf_matrix, 
-            cmap='Blues', 
-            xticklabels=label_map, 
-            yticklabels=label_map,
-            annot=True,
-            fmt='d')
+if plot_figures:
+    # display confusion matrix as heatmap
+    ax = sns.heatmap(conf_matrix, 
+                cmap='Blues', 
+                xticklabels=label_map, 
+                yticklabels=label_map,
+                annot=True,
+                fmt='d')
 
-plt.xlabel('Predicted label') 
-plt.ylabel('Correct label') 
+    plt.xlabel('Predicted label') 
+    plt.ylabel('Correct label') 
+    print("click window close button to continue")
+    plt.show()
 
-plt.show()
+
+# FIXED: "Incorrectly Classified Clothing" figure
 
 # plot up to max_preview clothing items that were correctly identified
-max_preview = 5
+shape_cols = 5
+shape_rows = 1
+max_preview = shape_cols * shape_rows
+width_px = 1500
+height_px = 400
+X_test = test_input_data * 255.0
 
-X_test = test_input_data * 255.0 ## not sure
-
-num_rows = 1
-num_cols = 5
-num_images = num_rows*num_cols
-fig = plt.figure(figsize=(2*num_cols, 2*num_rows))
+fig = plt.figure(figsize=(width_px/100, height_px/100))
 for index, fail_index in enumerate(incorrectly_classified[0:max_preview]):
     plt.xticks([])
     plt.yticks([])
-    plt.subplot(4, 5, index + 1)
+    ax = plt.subplot(shape_rows, shape_cols, index + 1)
     plt.imshow(np.reshape(X_test[fail_index], (28,28)), cmap=plt.cm.binary)
-    plt.title('Pred: {}, Actual: {}'.format(label_map[pred_label[fail_index]], 
-                                            label_map[label[fail_index]]), fontsize = 10)
+    plt.title('Pred: {}, Actual: {}'.format(label_map[pred_label[fail_index]], label_map[label[fail_index]]), fontsize = 10)
+    # ax.set_title("Plot Title") same as plt.title 
+fig.canvas.manager.set_window_title('Incorrectly Classified Clothing') 
+
+print("click window close button to continue")
 plt.show()
+
+    
+# num_cols = 5
+# num_rows = 1
+# num_images = num_rows*num_cols
+# fig = plt.figure(figsize=(2*num_cols, 2*num_rows)) # cols*100 x rows*100
+# for index, fail_index in enumerate(incorrectly_classified[0:max_preview]):
+#     plt.xticks([])
+#     plt.yticks([])
+#     plt.subplot(index+1, 1, index+1)
+#     plt.imshow(np.reshape(X_test[fail_index], (28,28)), cmap=plt.cm.binary)
+#     plt.title('Pred: {}, Actual: {}'.format(
+#         label_map[pred_label[fail_index]],
+#         label_map[label[fail_index]]), fontsize = 10)
+# plt.tight_layout()
+# print("click window close button to continue")
+# plt.show()
 
 from sklearn.metrics import precision_score
 
@@ -519,6 +554,7 @@ plt.xticks(y_pos, label_map, rotation=90)
 plt.ylabel('Precision ( --> better)')
 plt.title('Precision scores per class')
 
+print("click window close button to continue")
 plt.show()
 
 from sklearn.metrics import recall_score
@@ -536,6 +572,7 @@ plt.xticks(y_pos, label_map, rotation=90)
 plt.ylabel('Recall ( --> better)')
 plt.title('Recall scores per class')
 
+print("click window close button to continue")
 plt.show()
 
 print("done with ibm approach")

@@ -18,13 +18,25 @@ def show_and_wait_for_click(plt, msg=None):
     print("click the window's close button to continue")
     sys.stdout.flush()
 
-    # blocks
+    # blocks until close button is clicked
     plt.show()
+    plt.close()
+
+def plot_grid_of_NxN_labeled_images(N, X_data, y_data):
+    assert len(X_data) == len(y_data)
+    assert N*N <= len(X_data)
+    shape_rows = N
+    shape_cols = N
+    width_px = shape_cols * 200
+    height_px = shape_rows * 200
+    plt.figure(figsize=(width_px/100,height_px/100))
+    for i in range(N*N): # i'th frame
+        plt.subplot(shape_rows,shape_cols, i+1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.imshow(np.array(X_data.iloc[i, :]).reshape(28,28), cmap=plt.cm.binary)
+        plt.xlabel(y_data.iloc[i])
     
-    plt.waitforbuttonpress()
-    plt.close("all")
-    plt.close(plt.gcf())
-    print()
 
 # def get_unique_random_ints(minVal: int, maxVal: int, N: int):
 #     R = maxVal-minVal
@@ -60,6 +72,7 @@ def plot_idxed_image_files_with_labels(name, image_files, labels, plot_idx):
         plt.axis('off')
         title = f"{name}[{i}]: {labels[i]}" if name is not None else labels[i]
         plt.title(title)
+    plt.tight_layout()
     name_cnt =  f"{N} {name}" if name is not None else f"{N}"
     show_and_wait_for_click(plt, "{name_cnt} images and labels")
 
@@ -84,7 +97,7 @@ def plot_idxed_generator_images(name, generator, plot_idx, idx_to_label_map=None
         plt.axis('off')
         label = "unknown" if y is None else idx_to_label_map[y[i]]
         plt.title(f"{name}[{i}]: {label}")
-
+    plt.tight_layout()
     legend = "images only" if y is None else "images and labels"        
     show_and_wait_for_click(plt, f"Showing {N} {name} {legend}")
 
@@ -103,7 +116,7 @@ def plot_histogram(title: str='Title', data: List[float]=[], with_normal: bool=T
         p = norm.pdf(x, mu, std)
         plt.plot(x, p, 'k', linewidth=2)
         title = f"{title} mu:{mu:.2f} std:{std:.2f}"
-    
+    plt.tight_layout()
     plt.title(title)
     show_and_wait_for_click(plt, "Histogram with normal pdf")
 
@@ -132,6 +145,7 @@ def plot_model_fit_history(
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
+    plt.tight_layout()
     show_and_wait_for_click(plt, "accuracy metrics per epoch")
     
     # plot loss metrics per epoch
@@ -142,6 +156,7 @@ def plot_model_fit_history(
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
+    plt.tight_layout()
     show_and_wait_for_click(plt, "loss metrics per epoch")
 
 
